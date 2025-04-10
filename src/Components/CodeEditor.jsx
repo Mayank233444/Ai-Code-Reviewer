@@ -26,22 +26,30 @@ const CodeEditor = () => {
       if (!sourceCode) return;
   
       try {
-        const res = await fetch('/api/review', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ language, code: sourceCode }),
-        });
+          const res = await fetch('http://localhost:8000', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ language, code: sourceCode }),
+          });
   
-        const data = await res.json();
-        setOutput(data.result); // adjust this depending on your API response shape
-        setIsError(false);
+          if (!res.ok) {
+              const errorData = await res.json();
+              setOutput([errorData.error || 'Something went wrong!']);
+              setIsError(true);
+              return;
+          }
+  
+          const data = await res.json();
+          setOutput(data.result); // Use 'result' key from the response
+          setIsError(false);
       } catch (err) {
-        setOutput(['Something went wrong!']);
-        setIsError(true);
+          setOutput(['Something went wrong!']);
+          setIsError(true);
       }
-    };
+  };
+  
   return (
     <Box>
       <HStack spacing={4}>

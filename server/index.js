@@ -1,15 +1,13 @@
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const taskType = "Code Review";
 
 
-
-const app = express();
 app.use(cors({
-    origin:process.env.CORS_ORIGIN,
-    credentials:true
-}))
-
+  origin: 'http://localhost:3000', // Replace with your frontend's URL
+  credentials: true,
+}));
 
 app.use(express.json({}))
 app.use(express.urlencoded({extended:true}))
@@ -100,17 +98,24 @@ async function sendCodeTask({ taskType, language, code }) {
   }
   
 
-app.post('/', async (req, res) => {
-    const code = req.body.text; 
-    const {taskType, language} = req.params;
-    if(!code || !taskType || !language) {
-        throw new Error(404, "code not notFound");
+  app.post('/', async (req, res) => {
+    const { language, code } = req.body;
+
+    if (!code || !language) {
+        return res.status(400).json({ error: "Language or code not provided" });
     }
 
-    console.log(code);
-    const text = await sendCodeTask( taskType, language, code );
-    return res.status(200).json(text);
-})
-app.listen(8000 , () => {
-    console.log(`Server is running at 8000`)
+    console.log("Received code:", code);
+
+    try {
+        const text = await sendCodeTask({ taskType, language, code });
+        return res.status(200).json({ result: text }); // Send response with 'result' key
+    } catch (error) {
+        console.error("Error processing request:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+app.listen(8000, () => {
+    console.log(`Server is running at http://localhost:8000`);
 });
