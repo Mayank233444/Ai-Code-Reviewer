@@ -19,6 +19,21 @@
   }
 }
 
+html, body {
+  background-color: #0f1629 !important; /* Force black */
+  color: white;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  overscroll-behavior: none; /* prevent white glow on pull */
+  scroll-behavior: smooth;
+}
+
+body {
+  position: relative;
+}
 body {
   background: var(--background);
   color: var(--foreground);
