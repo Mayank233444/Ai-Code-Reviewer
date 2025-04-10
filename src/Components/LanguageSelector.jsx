@@ -39,9 +39,9 @@ const LanguageSelector = ({language,onSelect}) => {
            </Menu>
            
     </Box>
-    <Button colorScheme='blue' variant='outline'  fontWeight="bold" color="blue.400" >
+    {/* <Button colorScheme='blue' variant='outline'  fontWeight="bold" color="blue.400" >
     Start Review
-  </Button>
+  </Button> */}
     </Box>
   )
 }
