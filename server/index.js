@@ -6,7 +6,7 @@ const taskType = "Code Review";
 
 
 app.use(cors({
-  origin: 'http://localhost:3000', // Replace with your frontend's URL
+  origin: 'http://localhost:3000',
   credentials: true,
 }));
 
@@ -17,7 +17,7 @@ app.use(cookieParser())
 
 
 async function sendCodeTask({ taskType, language, code }) {
-    const HF_API_TOKEN = 'YOUR_HUGGINGFACE_API_KEY'; // Replace with env-secured token
+    const HF_API_TOKEN = "your hugging face token";
   
     const tasks = {
       "Code Review": `You are an experienced software engineer tasked with performing an in-depth code review. Below is a code snippet. Your task is to:
@@ -61,7 +61,7 @@ async function sendCodeTask({ taskType, language, code }) {
   ${code}
   \`\`\`
   </code>
-  
+
   The answer is:
   `;
   
@@ -91,7 +91,12 @@ async function sendCodeTask({ taskType, language, code }) {
       }
   
       const result = await response.json();
-      return result?.generated_text || result?.[0]?.generated_text || 'No response from model.';
+      const generatedText = result?.generated_text || result?.[0]?.generated_text || 'No response from model.';
+      
+      const answerStartIndex = generatedText.indexOf("The answer is:");
+      return answerStartIndex !== -1
+        ? generatedText.substring(answerStartIndex + "The answer is:".length).trim()
+        : generatedText.trim();
     } catch (error) {
       console.error('Error sending prompt:', error);
       return 'An error occurred while processing your request.';
@@ -107,9 +112,12 @@ async function sendCodeTask({ taskType, language, code }) {
     }
 
     console.log("Received code:", code);
+    console.log("received language", language);
+
 
     try {
         const text = await sendCodeTask({ taskType, language, code });
+        console.log("this is the text: ", text);
         return res.status(200).json({ result: text }); // Send response with 'result' key
     } catch (error) {
         console.error("Error processing request:", error);
